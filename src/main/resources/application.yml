@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: skillmap
+
+  security:
+    user:
+      name: anshu
+      password: anshu
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: codes404
+    password: codes404
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
