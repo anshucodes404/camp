@@ -1,6 +1,7 @@
 package org.camp.camp.models;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
@@ -9,6 +10,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "refresh_tokens")
 @Data
+@Builder
 public class RefreshToken {
 
     @Id

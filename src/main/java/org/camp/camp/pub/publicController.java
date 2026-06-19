@@ -1,6 +1,5 @@
 package org.camp.camp.pub;
 
-import org.camp.camp.models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,4 @@ public class publicController {
         return new ResponseEntity<>("Server is Healthy", HttpStatus.OK);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user) {
-
-    }
 }
