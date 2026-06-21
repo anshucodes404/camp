@@ -7,6 +7,16 @@ spring:
       name: anshu
       password: anshu
 
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Iv23liy9jClEukRvI5ZA
+            client-secret: 697e202ac198fba576b26124db6daf593b7fcaa3
+            scope:
+              - read:user
+              - user:email
+
   datasource:
     url: jdbc:postgresql://localhost:5432/camp
     username: codes404

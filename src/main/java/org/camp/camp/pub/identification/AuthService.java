@@ -3,11 +3,13 @@ package org.camp.camp.pub.identification;
 import lombok.RequiredArgsConstructor;
 import org.camp.camp.exceptions.EmailAlreadyExistsException;
 import org.camp.camp.exceptions.InvalidCredentialsException;
+import org.camp.camp.exceptions.InvalidRefreshTokenException;
 import org.camp.camp.jwt.JwtService;
 import org.camp.camp.models.RefreshToken;
 import org.camp.camp.models.User;
 import org.camp.camp.pub.identification.dto.AuthResponse;
 import org.camp.camp.pub.identification.dto.LoginRequest;
+import org.camp.camp.pub.identification.dto.RefreshRequest;
 import org.camp.camp.pub.identification.dto.RegisterRequest;
 import org.camp.camp.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,6 +94,35 @@ public class AuthService {
                         .displayName(user.getDisplayName())
                         .build()
                 ).build();
+    }
+
+    @Transactional
+    public AuthResponse refresh(RefreshRequest request) {
+        String tokenHash = hashToken(request.getRefreshToken());
+
+        RefreshToken existingToken = refreshTokenRepository.findByTokenHashAndRevokedFalse(tokenHash).orElseThrow(InvalidRefreshTokenException::new);
+
+        if(existingToken.getExpiresAt().isBefore(Instant.now())) {
+            throw new InvalidRefreshTokenException();
+        }
+
+        existingToken.setRevoked(true);
+        refreshTokenRepository.save(existingToken);
+
+        User user = userRepository.findById(existingToken.getUserId()).orElseThrow(InvalidRefreshTokenException::new);
+
+        return buildAuthResponse(user);
+    }
+
+    @Transactional
+    public void logout(RefreshRequest request) {
+        String tokenHash = hashToken(request.getRefreshToken());
+
+        refreshTokenRepository.findByTokenHashAndRevokedFalse(tokenHash)
+                .ifPresent(token -> {
+                    token.setRevoked(true);
+                    refreshTokenRepository.save(token);
+                });
     }
 
     private String hashToken(String rawToken) {
